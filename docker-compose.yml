@@ -6,22 +6,25 @@ services:
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
-      - MYSQL_DATABASE=${tarea_db}
-      - MYSQL_USER=${tarea_user}
-      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_ROOT_HOST=%
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-  adminer:
-    image: adminer
+    command: --default-authentication-plugin=mysql_native_password
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     restart: always
     ports:
-      - "8080:8080"
+      - "3000:3000"
     depends_on:
       - mysql
     env_file:
-      - .env.prod
+      - ./backend/.env.test
+
 volumes:
   mysql_data:
-    
